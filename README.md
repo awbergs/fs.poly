@@ -39,3 +39,6 @@ Bind to standard document events without vendor prefixes.
         //handle accordingly...
       }
     });
+    
+**Nuget**
+https://www.nuget.org/packages/fs.poly/0.1.0
