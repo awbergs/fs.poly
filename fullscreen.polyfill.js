@@ -5,17 +5,17 @@
 
         if (d.documentElement.msRequestFullscreen) {
             Element.prototype.requestFullscreen = Element.prototype.msRequestFullscreen;
-            Document.prototype.exitFullscreen = Document.prototype.msExitFullscreen;
+            HTMLDocument.prototype.exitFullscreen = HTMLDocument.prototype.msExitFullscreen;
             d.fullscreenEnabled = d.msFullscreenEnabled;
             elementKey = "msFullscreenElement";
         } else if (d.documentElement.webkitRequestFullscreen) {
             Element.prototype.requestFullscreen = Element.prototype.webkitRequestFullscreen;
-            Document.prototype.exitFullscreen = Document.prototype.webkitExitFullscreen;
+            HTMLDocument.prototype.exitFullscreen = HTMLDocument.prototype.webkitExitFullscreen;
             d.fullscreenEnabled = d.webkitFullscreenEnabled;
             elementKey = "webkitFullscreenElement";
         } else if (d.documentElement.mozRequestFullScreen) {
             Element.prototype.requestFullscreen = Element.prototype.mozRequestFullScreen;
-            Document.prototype.exitFullscreen = Document.prototype.mozCancelFullScreen;
+            HTMLDocument.prototype.exitFullscreen = HTMLDocument.prototype.mozCancelFullScreen;
             d.fullscreenEnabled = d.mozFullScreenEnabled;
             elementKey = "mozFullScreenElement";
         } else {
@@ -39,7 +39,7 @@
                 });
             };
 
-            Document.prototype.exitFullscreen = function () {
+            HTMLDocument.prototype.exitFullscreen = function () {
                 $d.off("keypress.fs");
 
                 if (d.fullscreenElement) {
