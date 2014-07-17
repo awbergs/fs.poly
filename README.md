@@ -33,6 +33,11 @@ Bind to standard document events without vendor prefixes.
     
     $(document).on({
       "fullscreenchange": () => {
+      
+        if (document.isCustomFullScreen) {
+            //Using custom full screen code path.
+            //This happens when the browser does not support fullscreen natively.
+        }
         //Request or exit has been called
       },
       "fullscreenerror": () => {
