@@ -22,50 +22,62 @@ interface Document
 
 (function (d: Document)
 {
+    var fsMap = {
+        'msRequestFullscreen': {
+            'r': 'msRequestFullscreen',     //request
+            'x': 'msExitFullscreen',        //exit
+            'e': 'msFullscreenEnabled',     //enabled
+            'k': 'msFullscreenElement'      //element key
+            },
+        'webkitRequestFullscreen':{
+            'r': 'webkitRequestFullscreen',
+            'x': 'webkitExitFullscreen',
+            'e': 'webkitFullscreenEnabled',
+            'k': 'webkitFullscreenElement'
+            },
+        'mozRequestFullScreen': {
+            'r': 'mozRequestFullScreen',
+            'x': 'mozCancelFullScreen',
+            'e': 'mozFullScreenEnabled',
+            'k': 'mozFullScreenElement'
+        }
+    }
+
     if (!d.documentElement.requestFullscreen)
     {
-        var $d = $(d);
-        var elementKey: string;
+        var $d = $(d),
+            elementKey: string,
+            map;
 
-        if (d.documentElement.msRequestFullscreen)
-        {
-            Element.prototype.requestFullscreen = Element.prototype.msRequestFullscreen;
-            d.constructor.prototype.exitFullscreen = d.constructor.prototype.msExitFullscreen;
-            d.fullscreenEnabled = d.msFullscreenEnabled;
-            elementKey = "msFullscreenElement";
+        for(var key in fsMap){
+            if(d.documentElement.hasOwnProperty(key)){
+                map = fsMap[key];
+            }
         }
-        else if (d.documentElement.webkitRequestFullscreen)
-        {
-            Element.prototype.requestFullscreen = Element.prototype.webkitRequestFullscreen;
-            d.constructor.prototype.exitFullscreen = d.constructor.prototype.webkitExitFullscreen;
-            d.fullscreenEnabled = d.webkitFullscreenEnabled;
-            elementKey = "webkitFullscreenElement";
+
+        if(map){
+            Element.prototype.requestFullscreen = Element.prototype[map.r];
+            d.constructor.prototype.exitFullscreen = d.constructor.prototype[map.x];
+            d.fullscreenEnabled = d[map.e];
+            elementKey = map.k;
         }
-        else if (d.documentElement.mozRequestFullScreen)
-        {
-            Element.prototype.requestFullscreen = Element.prototype.mozRequestFullScreen;
-            d.constructor.prototype.exitFullscreen = d.constructor.prototype.mozCancelFullScreen;
-            d.fullscreenEnabled = d.mozFullScreenEnabled;
-            elementKey = "mozFullScreenElement";
-        }
-        else
-        {
+        else {
             Element.prototype.requestFullscreen = function ()
             {
                 $(this).css(
                 {
-                    "position": "fixed",
-                    "top": 0,
-                    "left": 0,
-                    "width": "100%",
-                    "height": "100%",
-                    "z-index": 999
+                    'position': 'fixed',
+                    'top': 0,
+                    'left': 0,
+                    'width': '100%',
+                    'height': '100%',
+                    'z-index': 999
                     });
 
                 d.fullscreenElement = this;
-                $d.trigger("fullscreenchange");
+                $d.trigger('fullscreenchange');
 
-                $d.on("keypress.fs", function (e: JQueryEventObject)
+                $d.on('keypress.fs', function (e: JQueryEventObject)
                 {
                     if (e.keyCode === 27)
                     {
@@ -76,22 +88,22 @@ interface Document
 
             d.constructor.prototype.exitFullscreen = function ()
             {
-                $d.off("keypress.fs");
+                $d.off('keypress.fs');
 
                 if (d.fullscreenElement)
                 {
                     $(d.fullscreenElement).css(
                     {
-                        "position": "",
-                        "top": "",
-                        "left": "",
-                        "width": "",
-                        "height": "",
-                        "z-index": ""
+                        'position': '',
+                        'top': '',
+                        'left': '',
+                        'width': '',
+                        'height': '',
+                        'z-index': ''
                     });
 
                     this.fullscreenElement = null;
-                    $d.trigger("fullscreenchange");
+                    $d.trigger('fullscreenchange');
                 }
             }
 
@@ -100,15 +112,15 @@ interface Document
 
         $d.on(
             {
-                "MSFullscreenChange webkitfullscreenchange mozfullscreenchange": () =>
+                'MSFullscreenChange webkitfullscreenchange mozfullscreenchange': () =>
                 {
                     d.fullscreenElement = d[elementKey];
-                    $d.trigger("fullscreenchange");
+                    $d.trigger('fullscreenchange');
                 },
-                "MSFullScreenError webkitfullscreenerror mozfullscreenerror": () =>
+                'MSFullScreenError webkitfullscreenerror mozfullscreenerror': () =>
                 {
                     d.fullscreenElement = d[elementKey];
-                    $d.trigger("fullscreenerror");
+                    $d.trigger('fullscreenerror');
                 }
             });
     }
